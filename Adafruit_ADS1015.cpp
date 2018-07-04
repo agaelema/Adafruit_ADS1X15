@@ -64,7 +64,8 @@ static uint8_t i2cread(void) {
     @brief  Abstract away platform differences in Arduino wire library
 */
 /**************************************************************************/
-static void i2cwrite(uint8_t x) {
+static void i2cwrite(uint8_t x)
+{
   #if ARDUINO >= 100
   Wire.write((uint8_t)x);
   #else
@@ -77,7 +78,8 @@ static void i2cwrite(uint8_t x) {
     @brief  Writes 16-bits to the specified destination register
 */
 /**************************************************************************/
-static void writeRegister(uint8_t i2cAddress, uint8_t reg, uint16_t value) {
+static void writeRegister(uint8_t i2cAddress, uint8_t reg, uint16_t value)
+{
   Wire.beginTransmission(i2cAddress);
   i2cwrite((uint8_t)reg);
   i2cwrite((uint8_t)(value>>8));
@@ -90,7 +92,8 @@ static void writeRegister(uint8_t i2cAddress, uint8_t reg, uint16_t value) {
     @brief  Reads 16-bits to the specified destination register
 */
 /**************************************************************************/
-static uint16_t readRegister(uint8_t i2cAddress, uint8_t reg) {
+static uint16_t readRegister(uint8_t i2cAddress, uint8_t reg)
+{
   Wire.beginTransmission(i2cAddress);
   i2cwrite(reg);
   Wire.endTransmission();
@@ -125,7 +128,8 @@ Adafruit_ADS1115::Adafruit_ADS1115(uint8_t i2cAddress)
     @brief  Sets up the HW (reads coefficients values, etc.)
 */
 /**************************************************************************/
-void Adafruit_ADS1015::begin() {
+void Adafruit_ADS1015::begin()
+{
   Wire.begin();
 }
 
@@ -137,7 +141,8 @@ void Adafruit_ADS1015::begin() {
             have the SDA and SCL pins other than 4 and 5.
 */
 /**************************************************************************/
-void Adafruit_ADS1015::begin(uint8_t sda, uint8_t scl) {
+void Adafruit_ADS1015::begin(uint8_t sda, uint8_t scl)
+{
   Wire.begin(sda, scl);
 }
 #endif
@@ -188,7 +193,8 @@ adsSPS_t Adafruit_ADS1015::getSPS()
 	        register for single ended operations
 */
 /**************************************************************************/
-uint16_t getSingleEndedConfigBitsForMUX(uint8_t channel) {
+uint16_t getSingleEndedConfigBitsForMUX(uint8_t channel)
+{
   uint16_t c = 0;
   switch (channel)
   {
@@ -213,7 +219,8 @@ uint16_t getSingleEndedConfigBitsForMUX(uint8_t channel) {
     @brief  Gets a single-ended ADC reading from the specified channel in Volts
 */
 /**************************************************************************/
-float Adafruit_ADS1015::readADC_SingleEnded_V(uint8_t channel) {
+float Adafruit_ADS1015::readADC_SingleEnded_V(uint8_t channel)
+{
 	return (float)readADC_SingleEnded(channel) * voltsPerBit();
 }
 
@@ -222,7 +229,8 @@ float Adafruit_ADS1015::readADC_SingleEnded_V(uint8_t channel) {
     @brief  Gets a single-ended ADC reading from the specified channel
 */
 /**************************************************************************/
-int16_t Adafruit_ADS1015::readADC_SingleEnded(uint8_t channel) {
+int16_t Adafruit_ADS1015::readADC_SingleEnded(uint8_t channel)
+{
   if (channel > 3)
   {
     return 0;
@@ -253,7 +261,7 @@ int16_t Adafruit_ADS1015::readADC_SingleEnded(uint8_t channel) {
   // Wait for the conversion to complete
   waitForConversion();
 
-  return getLastConversionResults();                                      // conversion delay is included in this method
+  return getLastConversionResults();          		// conversion delay is included in this method
 }
 
 /**************************************************************************/
@@ -264,7 +272,8 @@ int16_t Adafruit_ADS1015::readADC_SingleEnded(uint8_t channel) {
             positive or negative.
 */
 /**************************************************************************/
-int16_t Adafruit_ADS1015::readADC_Differential(adsDiffMux_t regConfigDiffMUX) {
+int16_t Adafruit_ADS1015::readADC_Differential(adsDiffMux_t regConfigDiffMUX)
+{
   // Start with default values
   uint16_t config = ADS1X15_REG_CONFIG_CQUE_NONE    | // Disable the comparator (default val)
                     ADS1X15_REG_CONFIG_CLAT_NONLAT  | // Non-latching (default val)
@@ -279,7 +288,7 @@ int16_t Adafruit_ADS1015::readADC_Differential(adsDiffMux_t regConfigDiffMUX) {
   config |= m_SPS;
                     
   // Set channels
-  config |= regConfigDiffMUX;          // set P and N inputs for differential
+  config |= regConfigDiffMUX;						// set P and N inputs for differential
 
   // Set 'start single-conversion' bit
   config |= ADS1X15_REG_CONFIG_OS_SINGLE;
@@ -290,7 +299,7 @@ int16_t Adafruit_ADS1015::readADC_Differential(adsDiffMux_t regConfigDiffMUX) {
   // Wait for the conversion to complete
   waitForConversion();
   
-  return getLastConversionResults();                                      // conversion delay is included in this method
+  return getLastConversionResults();				// conversion delay is included in this method
 }
 
 /**************************************************************************/
@@ -301,8 +310,9 @@ int16_t Adafruit_ADS1015::readADC_Differential(adsDiffMux_t regConfigDiffMUX) {
             positive or negative.
 */
 /**************************************************************************/
-int16_t Adafruit_ADS1015::readADC_Differential_0_1() {
-  return readADC_Differential(DIFF_MUX_0_1);                               // AIN0 = P, AIN1 = N
+int16_t Adafruit_ADS1015::readADC_Differential_0_1()
+{
+  return readADC_Differential(DIFF_MUX_0_1);		// AIN0 = P, AIN1 = N
 }
 
 /**************************************************************************/
@@ -313,8 +323,9 @@ int16_t Adafruit_ADS1015::readADC_Differential_0_1() {
             positive or negative.
 */
 /**************************************************************************/
-int16_t Adafruit_ADS1015::readADC_Differential_0_3() {
-  return readADC_Differential(DIFF_MUX_0_3);                               // AIN0 = P, AIN3 = N
+int16_t Adafruit_ADS1015::readADC_Differential_0_3()
+{
+  return readADC_Differential(DIFF_MUX_0_3);		// AIN0 = P, AIN3 = N
 }
 
 /**************************************************************************/
@@ -325,8 +336,9 @@ int16_t Adafruit_ADS1015::readADC_Differential_0_3() {
             positive or negative.
 */
 /**************************************************************************/
-int16_t Adafruit_ADS1015::readADC_Differential_1_3() {
-  return readADC_Differential(DIFF_MUX_1_3);                               // AIN1 = P, AIN3 = N
+int16_t Adafruit_ADS1015::readADC_Differential_1_3()
+{
+  return readADC_Differential(DIFF_MUX_1_3);		// AIN1 = P, AIN3 = N
 }
 
 /**************************************************************************/
@@ -337,8 +349,9 @@ int16_t Adafruit_ADS1015::readADC_Differential_1_3() {
             positive or negative.
 */
 /**************************************************************************/
-int16_t Adafruit_ADS1015::readADC_Differential_2_3() {
-	return readADC_Differential(DIFF_MUX_2_3);                               // AIN2 = P, AIN3 = N
+int16_t Adafruit_ADS1015::readADC_Differential_2_3()
+{
+	return readADC_Differential(DIFF_MUX_2_3);		// AIN2 = P, AIN3 = N
 }
 
 /**************************************************************************/
@@ -350,8 +363,10 @@ int16_t Adafruit_ADS1015::readADC_Differential_2_3() {
 			Applies the Volts per bit to return actual voltage
 */
 /**************************************************************************/
-float Adafruit_ADS1015::readADC_Differential_0_1_V() {
-  return (float) readADC_Differential(DIFF_MUX_0_1) * voltsPerBit();                               // AIN0 = P, AIN1 = N
+float Adafruit_ADS1015::readADC_Differential_0_1_V()
+{
+  // AIN0 = P, AIN1 = N
+  return (float) readADC_Differential(DIFF_MUX_0_1) * voltsPerBit();
 }
 
 /**************************************************************************/
@@ -363,8 +378,10 @@ float Adafruit_ADS1015::readADC_Differential_0_1_V() {
 			Applies the Volts per bit to return actual voltage
 */
 /**************************************************************************/
-float Adafruit_ADS1015::readADC_Differential_0_3_V() {
-  return (float) readADC_Differential(DIFF_MUX_0_3) * voltsPerBit();                               // AIN0 = P, AIN1 = N
+float Adafruit_ADS1015::readADC_Differential_0_3_V()
+{
+  // AIN0 = P, AIN1 = N
+  return (float) readADC_Differential(DIFF_MUX_0_3) * voltsPerBit();
 }
 
 /**************************************************************************/
@@ -376,8 +393,10 @@ float Adafruit_ADS1015::readADC_Differential_0_3_V() {
 			Applies the Volts per bit to return actual voltage
 */
 /**************************************************************************/
-float Adafruit_ADS1015::readADC_Differential_1_3_V() {
-  return (float) readADC_Differential(DIFF_MUX_1_3) * voltsPerBit();                               // AIN0 = P, AIN1 = N
+float Adafruit_ADS1015::readADC_Differential_1_3_V()
+{
+  // AIN0 = P, AIN1 = N
+  return (float) readADC_Differential(DIFF_MUX_1_3) * voltsPerBit();
 }
 
 /**************************************************************************/
@@ -389,8 +408,10 @@ float Adafruit_ADS1015::readADC_Differential_1_3_V() {
 			Applies the Volts per bit to return actual voltage
 */
 /**************************************************************************/
-float Adafruit_ADS1015::readADC_Differential_2_3_V() {
-  return (float) readADC_Differential(DIFF_MUX_2_3) * voltsPerBit();                               // AIN0 = P, AIN1 = N
+float Adafruit_ADS1015::readADC_Differential_2_3_V()
+{
+  // AIN0 = P, AIN1 = N
+  return (float) readADC_Differential(DIFF_MUX_2_3) * voltsPerBit();
 }
 
 /**************************************************************************/
@@ -430,7 +451,6 @@ void Adafruit_ADS1015::startComparator_SingleEnded(uint8_t channel, int16_t high
 
   // Write config register to the ADC
   writeRegister(m_i2cAddress, ADS1X15_REG_POINTER_CONFIG, config);
-  
 }
 
 
@@ -471,7 +491,6 @@ void Adafruit_ADS1015::startWindowComparator_SingleEnded(uint8_t channel, int16_
 
   // Write config register to the ADC
   writeRegister(m_i2cAddress, ADS1X15_REG_POINTER_CONFIG, config);
-  
 }
 
 
@@ -487,7 +506,7 @@ void Adafruit_ADS1015::startContinuous_SingleEnded(uint8_t channel)
   // Initial single ended non-contunuous read primes the conversion buffer with a valid reading
   // so that the initial interrupts produced a correct result instead of a left over 
   // conversion result from previous operations.
-  int16_t primingRead = readADC_SingleEnded(channel); 
+  int16_t primingRead = readADC_SingleEnded(channel);
   
   // Start with default values
   uint16_t config = ADS1X15_REG_CONFIG_CQUE_1CONV   | // Comparator enabled and asserts on 1 match
@@ -511,7 +530,6 @@ void Adafruit_ADS1015::startContinuous_SingleEnded(uint8_t channel)
 
   // Write config register to the ADC
   writeRegister(m_i2cAddress, ADS1X15_REG_POINTER_CONFIG, config);
-  
 }
 
 /**************************************************************************/
@@ -550,7 +568,6 @@ void Adafruit_ADS1015::startContinuous_Differential(adsDiffMux_t regConfigDiffMU
 
   // Write config register to the ADC
   writeRegister(m_i2cAddress, ADS1X15_REG_POINTER_CONFIG, config);
-  
 }
 
 /**************************************************************************/
@@ -561,7 +578,8 @@ void Adafruit_ADS1015::startContinuous_Differential(adsDiffMux_t regConfigDiffMU
 			completes. Pin stays low for 8 micro seconds (per the datasheet)
 */
 /**************************************************************************/
-void Adafruit_ADS1015::startContinuous_Differential_0_1() {
+void Adafruit_ADS1015::startContinuous_Differential_0_1()
+{
   startContinuous_Differential(DIFF_MUX_0_1);                             // AIN0 = P, AIN1 = N
 }
 
@@ -573,7 +591,8 @@ void Adafruit_ADS1015::startContinuous_Differential_0_1() {
 			completes. Pin stays low for 8 micro seconds (per the datasheet)
 */
 /**************************************************************************/
-void Adafruit_ADS1015::startContinuous_Differential_0_3() {
+void Adafruit_ADS1015::startContinuous_Differential_0_3()
+{
   startContinuous_Differential(DIFF_MUX_0_3);                             // AIN0 = P, AIN1 = N
 }
 
@@ -585,7 +604,8 @@ void Adafruit_ADS1015::startContinuous_Differential_0_3() {
 			completes. Pin stays low for 8 micro seconds (per the datasheet)
 */
 /**************************************************************************/
-void Adafruit_ADS1015::startContinuous_Differential_1_3() {
+void Adafruit_ADS1015::startContinuous_Differential_1_3()
+{
   startContinuous_Differential(DIFF_MUX_1_3);                             // AIN0 = P, AIN1 = N
 }
 
@@ -597,7 +617,8 @@ void Adafruit_ADS1015::startContinuous_Differential_1_3() {
 			completes. Pin stays low for 8 micro seconds (per the datasheet)
 */
 /**************************************************************************/
-void Adafruit_ADS1015::startContinuous_Differential_2_3() {
+void Adafruit_ADS1015::startContinuous_Differential_2_3()
+{
   startContinuous_Differential(DIFF_MUX_2_3);                             // AIN0 = P, AIN1 = N
 }
 
@@ -706,4 +727,3 @@ float Adafruit_ADS1015::voltsPerBit()
 	}
 	return v;
 }
-
